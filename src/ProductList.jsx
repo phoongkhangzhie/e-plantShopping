@@ -2,10 +2,16 @@ import React, { useState, useEffect } from 'react';
 import './ProductList.css'
 import CartItem from './CartItem';
 import addItem from './CartSlice';
+
 function ProductList({ onHomeClick }) {
     const [showCart, setShowCart] = useState(false);
     const [showPlants, setShowPlants] = useState(false); // State to control the visibility of the About Us page
     const [addedToCart, setAddedToCart] = useState({});
+
+    const cartItems = useSelector((state) => state.cart.items);
+    const [totalQuant, setTotalQuant] = useState(0);
+
+    const dispatch = useDispatch()
 
     const handleAddToCart = (product) => {
         dispatch(addItem(product));
@@ -13,7 +19,19 @@ function ProductList({ onHomeClick }) {
             ...prevState,
             [product.name]: true, // Set the product name as key and value as true to indicate it's added to cart
         }));
+        setTotalQuant(calculateTotalQuantity())
     };
+
+    const calculateTotalQuantity = () => {
+        let totalQuant = 0;
+        cartItems.forEach((item) => {
+            totalQuant += item.quantity;
+        });
+        return totalQuant;
+    };
+
+
+
     const plantsArray = [
         {
             category: "Air Purifying Plants",
